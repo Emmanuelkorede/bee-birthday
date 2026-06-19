@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Director Bee's Hype Feed — Full Messages 💌</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+  <style>
+    .subpage-body {
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 20px 16px;
+    }
+    
+    .subpage-nav-header {
+      max-width: 800px;
+      margin: 0 auto 32px auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 10px 4px;
+    }
+    
+    .full-feed-container {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .btn-return {
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+    .back-to-top-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--bg-raised);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px var(--accent-glow);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+    .back-to-top-btn:hover {
+      background: var(--accent);
+      color: #0a0a0c;
+      transform: translateY(-4px);
+    }
+    .full-wish-card {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
+
+    .throwback-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+      width: 100%;
+    }
+    
+    .throwback-thumb {
+      width: 100% !important;
+      max-width: 100% !important;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--glass-border);
+      cursor: pointer;
+      transition: transform 0.25s ease, border-color 0.25s;
+    }
+    
+    .throwback-thumb:hover {
+      transform: scale(1.04);
+      border-color: var(--accent);
+    }
+
+    /* Mobile Header Layout Media Queries */
+    @media (max-width: 520px) {
+      .subpage-nav-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 24px;
+      }
+      .subpage-nav-header .outro-signature {
+        align-self: flex-start !important;
+      }
+      .throwback-grid {
+        grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+        gap: 8px;
+      }
+    }
+  </style>
+</head>
+<body class="subpage-body">
+
+  <div class="bg-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+  </div>
+
+  <header class="subpage-nav-header">
+    <a href="index.html" class="btn-ghost btn-return" aria-label="Return to the main page">
+      ← Back to Main Page
+    </a>
+    <div class="outro-signature" style="align-items: flex-end;">
+      
+      <span class="name" style="font-size: 15px;">Director Bee 🐝</span>
+    </div>
+  </header>
+
+  <main class="full-feed-container">
+    <div style="text-align: center; margin-bottom: 24px;">
+      <h1 class="carousel-title">The Complete <span class="gold">Hype Archive</span> 💌</h1>
+      <p class="carousel-subtitle">Read every beautiful blessing and message left for you</p>
+    </div>
+
+    <div id="full-feed-loading" class="feed-loading" style="justify-content: center;">
+      <div class="spinner"></div>
+      <span>Retrieving all memory notes...</span>
+    </div>
+
+    <div id="full-feed-empty" class="feed-empty" style="display: none;">
+      <p>No messages found in the archive database yet. 🌐</p>
+    </div>
+
+    <div id="full-feed-list" class="feed-list">
+      </div>
+  </main>
+
+  <button id="back-to-top" class="back-to-top-btn" title="Scroll to top" aria-label="Scroll back to top">↑</button>
+
+  <div id="subpage-lightbox" id="lightbox" style="position: fixed; inset: 0; z-index: 9000; background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(20px); display: none; align-items: center; justify-content: center; padding: 24px; cursor: zoom-out;">
+    <button id="subpage-lightbox-close" style="position: absolute; top: 24px; right: 24px; width: 44px; height: 44px; border-radius: 50%; background: var(--bg-raised); border: 1px solid var(--glass-border); color: var(--text-primary); font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+    <img id="subpage-lightbox-img" src="" alt="Expanded preview" style="max-width: 90vw; max-height: 90vh; object-fit: contain; border-radius: var(--radius-md); border: 1px solid var(--glass-border); box-shadow: 0 24px 80px rgba(0,0,0,0.9);" />
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+    import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBVLZoN43sOvKG1oBZJD_z3H6tLC3fThgM",
+      authDomain: "sisters-birthday-site.firebaseapp.com",
+      projectId: "sisters-birthday-site",
+      storageBucket: "sisters-birthday-site.firebasestorage.app",
+      messagingSenderId: "545636768227",
+      appId: "1:545636768227:web:5d4a849bfe8e454af7e8d6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const listEl = document.getElementById("full-feed-list");
+    const loadingEl = document.getElementById("full-feed-loading");
+    const emptyEl = document.getElementById("full-feed-empty");
+
+    const lbContainer = document.getElementById("subpage-lightbox");
+    const lbImg = document.getElementById("subpage-lightbox-img");
+    const lbClose = document.getElementById("subpage-lightbox-close");
+
+    // Scroll to top engine
+    const topBtn = document.getElementById("back-to-top");
+    topBtn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    // Lightbox triggers
+    function showImage(src) {
+      lbImg.src = src;
+      lbContainer.style.display = "flex";
+      document.body.style.overflow = "hidden";
+    }
+    function hideImage() {
+      lbContainer.style.display = "none";
+      lbImg.src = "";
+      document.body.style.overflow = "";
+    }
+    lbClose.addEventListener("click", hideImage);
+    lbContainer.addEventListener("click", (e) => { if (e.target === lbContainer) hideImage(); });
+
+    function formatTimestamp(ts) {
+      if (!ts) return "";
+      try {
+        const date = ts.toDate ? ts.toDate() : new Date(ts);
+        return date.toLocaleDateString("en-NG", {
+          day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit"
+        });
+      } catch { return ""; }
+    }
+
+    // Dynamic clean structural node build
+    function generateWishNode(data) {
+      const card = document.createElement("div");
+      card.className = "wish-card full-wish-card";
+
+      const header = document.createElement("div");
+      header.className = "wish-header";
+
+      let avatarHtml = `<div class="wish-avatar-fallback"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="13" cy="9" r="5" fill="#d4af37" opacity="0.6"/><path d="M2 24c0-6.075 4.925-11 11-11s11 4.925 11 11" stroke="#d4af37" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/></svg></div>`;
+      if (data.avatarUrl && data.avatarUrl.trim() !== "") {
+        avatarHtml = `<img src="${data.avatarUrl}" class="wish-avatar" alt="User Profile Image" onerror="this.style.display='none'" />`;
+      }
+
+      const safeName = document.createElement("div").appendChild(document.createTextNode(data.name || "Anonymous")).parentNode.textContent;
+
+      header.innerHTML = `
+        ${avatarHtml}
+        <div>
+          <div class="wish-name">${safeName}</div>
+          <div class="wish-time">${formatTimestamp(data.timestamp)}</div>
+        </div>
+      `;
+
+      const msg = document.createElement("p");
+      msg.className = "wish-message";
+      msg.textContent = data.message || "";
+
+      card.appendChild(header);
+      card.appendChild(msg);
+
+      // Handle custom throwback image matrices safely
+      const arrays = Array.isArray(data.throwbackUrls) ? data.throwbackUrls : [];
+      if (arrays.length > 0) {
+        const grid = document.createElement("div");
+        grid.className = "throwback-grid";
+        arrays.forEach(url => {
+          if (!url || url.trim() === "") return;
+          const thumb = document.createElement("img");
+          thumb.src = url;
+          thumb.className = "throwback-thumb";
+          thumb.alt = "Throwback memory attachment";
+          thumb.addEventListener("click", () => showImage(url));
+          grid.appendChild(thumb);
+        });
+        card.appendChild(grid);
+      }
+
+      // Bind profile click expansion too if present
+      const profileImg = header.querySelector(".wish-avatar");
+      if (profileImg) {
+        profileImg.addEventListener("click", () => showImage(data.avatarUrl));
+      }
+
+      return card;
+    }
+
+    // Active connection stream query setup
+    const q = query(collection(db, "wishes"), orderBy("timestamp", "desc"));
+    onSnapshot(q, snapshot => {
+      loadingEl.style.display = "none";
+      listEl.innerHTML = "";
+      if (snapshot.empty) {
+        emptyEl.style.display = "block";
+        return;
+      }
+      emptyEl.style.display = "none";
+      snapshot.forEach(doc => {
+        listEl.appendChild(generateWishNode(doc.data()));
+      });
+    }, err => {
+      console.error(err);
+      loadingEl.style.display = "none";
+      emptyEl.style.display = "block";
+    });
+  </script>
+</body>
+</html>

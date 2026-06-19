@@ -1,0 +1,161 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Director Bee's Photographic Archive 🎞️</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+  <style>
+    .gallery-body {
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 20px 16px;
+    }
+    .gallery-layout-wrapper {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    
+    .subpage-nav-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+      gap: 16px;
+      padding: 10px 4px;
+    }
+    .btn-return {
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .custom-masonry-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 28px;
+      margin-top: 40px;
+    }
+    .archive-polaroid {
+      background: #faf4e8;
+      padding: 14px; 
+      border-radius: 4px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      cursor: zoom-in;
+    }
+    .archive-polaroid:hover {
+      transform: translateY(-8px) scale(1.03) rotate(1deg);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 25px var(--accent-glow);
+    }
+    .archive-polaroid img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 2px;
+      display: block;
+    }
+
+    @media (max-width: 520px) {
+      .subpage-nav-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .custom-masonry-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-top: 24px;
+      }
+      .archive-polaroid {
+        padding: 8px;
+      }
+    }
+  </style>
+</head>
+<body class="gallery-body">
+
+  <div class="bg-orbs" aria-hidden="true">
+    <div class="orb orb-2" style="top:20%; left:10%"></div>
+    <div class="orb orb-3" style="bottom:15%; right:15%"></div>
+  </div>
+
+  <div class="gallery-layout-wrapper">
+    <header class="subpage-nav-header">
+      <a href="index.html" class="btn-ghost btn-return">
+        ← Back to Main Page
+      </a>
+      <span class="name" style="font-family:'DM Serif Display',serif; color:var(--accent); font-size:18px;">Director Bee 🐝</span>
+    </header>
+
+    <div style="text-align:center;">
+      <p class="section-label">✦ The Complete Photographic Vault</p>
+      <h1 class="carousel-title">Captured <span class="gold">Memories</span> 🎞️</h1>
+      <p class="carousel-subtitle">Every single unforgettable frame, unfiltered and raw.</p>
+    </div>
+
+    <main class="custom-masonry-grid">
+      
+      <div class="archive-polaroid">
+        <img src="images/carousel1.jpg" alt="Memory Photo Grid Asset" />
+      </div>
+
+      <div class="archive-polaroid">
+        <img src="images/carousel2.jpg" alt="Memory Photo Grid Asset" />
+      </div>
+
+      <div class="archive-polaroid">
+        <img src="images/carousel3.jpg" alt="Memory Photo Grid Asset" />
+      </div>
+
+      <div class="archive-polaroid">
+        <img src="images/carousel4.jpg" alt="Memory Photo Grid Asset" />
+      </div>
+
+      <div class="archive-polaroid">
+        <img src="images/gallery5.jpg" alt="Memory Photo Grid Asset" onerror="this.parentElement.style.display='none'" />
+      </div>
+
+      <div class="archive-polaroid">
+        <img src="images/gallery6.jpg" alt="Memory Photo Grid Asset" onerror="this.parentElement.style.display='none'" />
+      </div>
+
+    </main>
+  </div>
+
+  <div id="gallery-lightbox" style="position: fixed; inset: 0; z-index: 9000; background: rgba(0, 0, 0, 0.94); backdrop-filter: blur(25px); display: none; align-items: center; justify-content: center; padding: 24px; cursor: zoom-out;">
+    <button id="gallery-lightbox-close" style="position: absolute; top: 24px; right: 24px; width: 44px; height: 44px; border-radius: 50%; background: var(--bg-raised); border: 1px solid var(--glass-border); color: var(--text-primary); font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+    <img id="gallery-lightbox-img" src="" alt="Expanded View Asset" style="max-width: 90vw; max-height: 90vh; object-fit: contain; border-radius: var(--radius-md); border: 1px solid var(--glass-border); box-shadow: 0 24px 80px rgba(0,0,0,0.95);" />
+  </div>
+
+  <script>
+    const box = document.getElementById("gallery-lightbox");
+    const boxImg = document.getElementById("gallery-lightbox-img");
+    const boxClose = document.getElementById("gallery-lightbox-close");
+
+    document.querySelectorAll(".archive-polaroid img").forEach(img => {
+      img.addEventListener("click", () => {
+        boxImg.src = img.src;
+        box.style.display = "flex";
+        document.body.style.overflow = "hidden";
+      });
+    });
+
+    function cleanClose() {
+      box.style.display = "none";
+      boxImg.src = "";
+      document.body.style.overflow = "";
+    }
+
+    boxClose.addEventListener("click", cleanClose);
+    box.addEventListener("click", (e) => { if (e.target === box) cleanClose(); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") cleanClose(); });
+  </script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Send Director Bee 🐝 a Birthday Wish 🎂</title>
+  <link rel="stylesheet" href="form-style.css" />
+  <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+</head>
+<body>
+
+  <div class="bg-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+  </div>
+
+  <div class="page-wrap">
+
+    <header class="page-header">
+      <span class="eyebrow">✦ A Secret Invitation ✦</span>
+      <h1>Send <span class="gold">Director Bee 🐝</span> a<br />Birthday Wish 💛</h1>
+      <p>Your message will appear live on her special birthday site</p>
+    </header>
+
+    <div class="tabs-nav">
+      <button type="button" class="tab-btn active" id="btn-tab-instructions">Instructions</button>
+      <button type="button" class="tab-btn" id="btn-tab-form">Write Wish</button>
+    </div>
+
+    <div id="section-instructions" class="tab-content active">
+      <div class="instruction-card" role="region" aria-label="How this works">
+        <div class="instruction-header">
+          <span class="instruction-icon" aria-hidden="true">📖</span>
+          <h2>How This Works</h2>
+        </div>
+        <div class="instruction-steps">
+          <div class="step">
+            <div class="step-number" aria-hidden="true">1</div>
+            <p>Fill in your <strong>name and birthday message</strong> below , make it count, she is going to read every single one!</p>
+          </div>
+          <div class="step">
+            <div class="step-number" aria-hidden="true">2</div>
+            <p><strong>Optionally</strong>, add a profile picture so she instantly knows who is sending the love, and throwback photos for the memories section.</p>
+          </div>
+          <div class="step">
+            <div class="step-number" aria-hidden="true">3</div>
+            <p>Hit <strong>Send Wish ✨</strong>  your message will show up live on her private birthday experience page in real time!</p>
+          </div>
+          <div class="step">
+            <div class="step-number" aria-hidden="true">🔒</div>
+            <p>This page is <strong>secret</strong>. Please do not share this link with Director Bee 🐝 , keep the surprise intact!</p>
+          </div>
+        </div>
+        <button type="button" class="btn-submit" id="get-started-btn" style="margin-top: 28px;">Get Started 🚀</button>
+      </div>
+    </div>
+
+    <div id="section-form" class="tab-content">
+      <div class="form-card">
+        <form id="wish-form" novalidate>
+
+          <div class="form-group">
+            <label class="form-label" for="input-name">
+              Your Full Name <span class="badge">Required</span>
+            </label>
+            <input
+              type="text"
+              id="input-name"
+              name="name"
+              class="form-input"
+              placeholder="e.g. Amara Johnson"
+              autocomplete="name"
+              required
+              aria-required="true"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="input-message">
+              Your Birthday Message <span class="badge">Required</span>
+            </label>
+            <textarea
+              id="input-message"
+              name="message"
+              class="form-textarea"
+              placeholder="Write something heartfelt, funny, or both  she deserves it all! Tell her what she means to you..."
+              required
+              aria-required="true"
+            ></textarea>
+          </div>
+
+          <hr class="form-divider" />
+
+          <div class="form-group">
+            <label class="form-label" for="input-avatar">
+              Profile Picture <span class="badge">Optional</span>
+            </label>
+            <p class="helper-text">
+              Add a profile picture of your face so she instantly recognizes who sent this message! 📸
+            </p>
+            <div class="file-upload-box" id="avatar-upload-box">
+              <input
+                type="file"
+                id="input-avatar"
+                name="avatar"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                aria-label="Upload a profile picture"
+              />
+              <span class="upload-icon" aria-hidden="true">🤳</span>
+              <span class="upload-label-text">Click to upload your profile pic</span>
+              <span class="upload-sub-text">JPG, PNG or WEBP  max 10MB</span>
+              <span class="file-count-badge" id="avatar-count-badge"></span>
+            </div>
+            <div id="avatar-preview-container" class="preview-container"></div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="input-throwbacks">
+              Throwback Memories <span class="badge">Optional</span>
+            </label>
+            <p class="helper-text">
+              Upload up to 3 throwback or memory pictures of you two together! 🎞️
+            </p>
+            <div class="file-upload-box" id="throwback-upload-box">
+              <input
+                type="file"
+                id="input-throwbacks"
+                name="throwbacks"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                multiple
+                aria-label="Upload up to 3 throwback memory photos"
+              />
+              <span class="upload-icon" aria-hidden="true">🎞️</span>
+              <span class="upload-label-text">Click to upload memory pictures</span>
+              <span class="upload-sub-text">Select up to 3 images </span>
+              <span class="file-count-badge" id="throwback-count-badge"></span>
+            </div>
+            <div id="throwback-preview-container" class="preview-container"></div>
+          </div>
+
+          <div class="upload-progress" id="upload-progress">
+            <div class="progress-label" id="progress-label">Uploading images...</div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill" id="progress-bar-fill"></div>
+            </div>
+          </div>
+
+          <div class="error-banner" id="error-banner" role="alert" aria-live="assertive">
+            <span class="error-icon">⚠️</span>
+            <span id="error-message">Something went wrong. Please try again.</span>
+          </div>
+
+          <button type="submit" class="btn-submit" id="submit-btn" aria-label="Send your birthday wish">
+            <span class="spinner" aria-hidden="true"></span>
+            <span class="btn-text">Send Wish ✨</span>
+          </button>
+
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="success-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-inner">
+      <span class="modal-emoji" aria-hidden="true">🎉</span>
+      <h2 class="modal-title" id="modal-title">
+        Wish <span class="gold">Sent!</span>
+      </h2>
+      <p class="modal-body">
+        Your birthday message has been delivered to Director Bee 🐝's special page. She is going to love this.
+        Thank you for being part of making her day magical! 💛
+      </p>
+      <button class="modal-close-btn" id="modal-close-btn" aria-label="Close confirmation">
+        Done! 🌟
+      </button>
+    </div>
+  </div>
+
+  <script type="module" src="form-script.js"></script>
+</body>
+</html>
