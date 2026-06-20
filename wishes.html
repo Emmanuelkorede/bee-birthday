@@ -108,6 +108,21 @@
         gap: 8px;
       }
     }
+    /* FIX: Adds proper spacing and separation between individual full memory cards */
+#full-feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* This creates clean spacing between each card */
+  margin-top: 16px;
+}
+
+.full-wish-card {
+  background: #121218;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
   </style>
 </head>
 <body class="subpage-body">
@@ -262,7 +277,7 @@
     }
 
     // Active connection stream query setup
-    const q = query(collection(db, "wishes"), orderBy("timestamp", "desc"));
+    const q = query(collection(db, "wishes"), orderBy("timestamp", "asc"));
     onSnapshot(q, snapshot => {
       loadingEl.style.display = "none";
       listEl.innerHTML = "";
