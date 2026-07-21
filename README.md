@@ -8,8 +8,8 @@ A custom, interactive birthday web application built for my sister. The project 
 
 ## 🔗 Live Links
 
-* **Sister's Birthday Site (Main):** [Insert Sister's Live Link Here](https://your-app-name.vercel.app)
-* **Secret Friends' Wish Form:** [Insert Friends' Form Link Here](https://your-app-name.vercel.app/form)
+* **Sister's Birthday Site (Main):** (https://dir-bee-birthday.vercel.app/)
+* **Secret Friends' Wish Form:**(https://dir-bee-birthday.vercel.app/form.html)
 
 ---
 
